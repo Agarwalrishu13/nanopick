@@ -1,0 +1,58 @@
+/* nanoPick — no build step, no framework. Same warm palette as the family;
+   the page is read by people who have never used a file manager on purpose. */
+
+/* (the family stylesheet is already loaded — this file only adds what
+   nanoPick's results and preview need on top of it) */
+
+.filters { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+.filters label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.filters select {
+  padding: 9px 12px; border-radius: 11px; background: var(--surface);
+  border: 1px solid var(--border); color: var(--text); outline: none;
+}
+.filters select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+
+.results { display: grid; gap: 8px; }
+.result {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer; text-align: left; width: 100%;
+  color: var(--text); transition: border-color 0.14s, transform 0.1s;
+}
+.result:hover { border-color: var(--accent); transform: translateY(-1px); }
+.result .icon { font-size: 24px; flex: none; }
+.result .main { flex: 1; min-width: 0; }
+.result .name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.result .facts { color: var(--muted); font-size: 13px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.result .acts { display: flex; gap: 6px; flex: none; }
+.result .tick {
+  width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--border);
+  display: grid; place-items: center; font-size: 13px; color: transparent; flex: none;
+}
+.result.chosen { border-color: var(--accent); background: var(--accent-soft); }
+.result.chosen .tick { border-color: var(--accent); color: var(--accent); }
+
+.panel.empty { text-align: center; padding: 40px 20px; }
+
+.preview-panel { margin-top: 26px; }
+.preview-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: start; }
+.preview-body {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius); min-height: 220px; display: grid; place-items: center;
+  overflow: hidden; padding: 10px;
+}
+.preview-body img, .preview-body video { max-width: 100%; max-height: 420px; border-radius: 8px; }
+.preview-body audio { width: 100%; }
+.preview-body pre {
+  width: 100%; max-height: 420px; overflow: auto; margin: 0;
+  font-family: var(--mono); font-size: 13px; white-space: pre-wrap; color: var(--text);
+}
+.preview-body .nopreview { color: var(--muted); text-align: center; padding: 30px 14px; }
+.preview-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.preview-actions .btn { width: 100%; }
+
+.pack-panel { margin-top: 26px; border-color: rgba(255, 180, 84, 0.4); }
+
+@media (max-width: 860px) {
+  .preview-grid { grid-template-columns: 1fr; }
+}

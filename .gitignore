@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Local runtime state — never commit somebody's files or folders
+data/
+uploads/
+.nanopick/
+*.log
+
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

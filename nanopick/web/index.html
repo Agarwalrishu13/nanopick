@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nanoPick — find your files by saying what you remember</title>
+<meta name="description" content="A picture called receipt from last month. Type the words you remember, see the file, open it or send a copy where it needs to go.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧲</text></svg>">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🧲</div>
+    <div>
+      <div class="brand-name">nanoPick</div>
+      <div class="brand-sub">Find your files by saying what you remember. Nothing is moved without asking.</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn ghost" id="whereBtn" title="Where copies go">📥&nbsp; Where copies go</button>
+    <button class="btn ghost" id="helpBtn" title="How this works">?</button>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ---------------------------------------------------------------- hero -->
+  <section class="hero">
+    <h1>What do you remember about it?</h1>
+    <p class="hero-sub">
+      A word from the name, roughly what kind of thing it was, roughly when — that is enough.
+    </p>
+    <div class="ask-row">
+      <input type="text" id="q" autocomplete="off" spellcheck="false"
+             placeholder="receipt, holiday photo, project report…">
+      <button class="btn primary big" id="goBtn">Find it</button>
+    </div>
+    <div class="filters">
+      <label>what kind
+        <select id="kind">
+          <option value="any">anything</option>
+          <option value="pictures">pictures</option>
+          <option value="documents">documents</option>
+          <option value="music">music</option>
+          <option value="video">video</option>
+          <option value="archives">zips and archives</option>
+        </select>
+      </label>
+      <label>roughly when
+        <select id="when">
+          <option value="any">whenever</option>
+          <option value="today">today</option>
+          <option value="this week">this week</option>
+          <option value="this month">this month</option>
+          <option value="this year">this year</option>
+          <option value="older">older than a year</option>
+        </select>
+      </label>
+      <label>order by
+        <select id="sort">
+          <option value="newest">newest first</option>
+          <option value="biggest">biggest first</option>
+          <option value="name">name</option>
+        </select>
+      </label>
+    </div>
+    <div class="hero-note" id="heroNote">
+      nanoPick only looks in the folders you let it — nothing leaves this computer.
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------------- results -->
+  <section class="block">
+    <div class="block-head">
+      <h2 id="resultsTitle">What I found</h2>
+      <span class="muted" id="resultsHint"></span>
+    </div>
+    <div id="results" class="results"></div>
+    <div id="emptyState" class="panel empty" hidden>
+      <p><strong>Nothing matched that.</strong></p>
+      <p class="muted">Try fewer words, or a different kind or when.</p>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------------- preview -->
+  <section class="panel preview-panel" id="previewPanel" hidden>
+    <div class="block-head">
+      <h3 id="previewTitle">—</h3>
+      <button class="btn ghost small" id="previewClose">✕</button>
+    </div>
+    <div class="preview-grid">
+      <div class="preview-body" id="previewBody"></div>
+      <div class="preview-side">
+        <div class="muted small" id="previewFacts"></div>
+        <div class="preview-actions">
+          <button class="btn primary" id="previewOpen">Open it</button>
+          <button class="btn" id="previewReveal">Show me the folder</button>
+          <button class="btn" id="previewCopy">Send a copy where copies go</button>
+        </div>
+        <div class="muted small" id="previewSaid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- pack -->
+  <section class="panel pack-panel" id="packPanel" hidden>
+    <div class="block-head">
+      <h3 id="packTitle">You have chosen 0 files</h3>
+      <div>
+        <button class="btn primary" id="packBtn">Pack them into one zip</button>
+        <button class="btn ghost small" id="packClear">Choose none</button>
+      </div>
+    </div>
+    <div class="muted small" id="packWhere"></div>
+  </section>
+
+</main>
+
+<!-- ------------------------------------------------------------------ modal -->
+<div class="backdrop" id="whereModal" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Where copies go</h2>
+      <button class="btn ghost small" data-close>✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="muted">When you press <strong>Send a copy</strong> or <strong>Pack into one zip</strong>,
+      the new files are put in this folder. The originals always stay where they are.</p>
+      <label class="field">
+        <span>This folder</span>
+        <input type="text" id="destInput" spellcheck="false" placeholder="for example  C:\Users\you\Documents\My project">
+      </label>
+      <button class="btn" id="browseBtn">Choose a folder in a window</button>
+      <div class="muted small" id="whereSaid"></div>
+    </div>
+    <div class="modal-foot">
+      <div class="muted small">It is remembered, so you only choose once.</div>
+      <button class="btn primary" data-close>Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="helpModal" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <h2>How this works</h2>
+      <button class="btn ghost small" data-close>✕</button>
+    </div>
+    <div class="modal-body prose">
+      <p><strong>1. Say what you remember.</strong> Any words from the file's name. “receipt last”
+      finds <code>receipt-november-last.jpg</code>. Fewer words finds more.</p>
+      <p><strong>2. Narrow it down.</strong> Roughly what kind, roughly when. You can order by
+      newest, biggest or name.</p>
+      <p><strong>3. Click a result</strong> to see it right here — pictures show on the page.</p>
+      <p><strong>4. Do the thing:</strong> open it, show the folder it lives in, send a copy to
+      your project folder, or tick a few and pack them into one zip.</p>
+      <p><strong>The promise:</strong> nanoPick never moves, renames or deletes your files. Copies
+      only, into the folder you chose, and nothing is ever uploaded anywhere.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn primary" data-close>Got it</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<script src="/app.js"></script>
+</body>
+</html>
