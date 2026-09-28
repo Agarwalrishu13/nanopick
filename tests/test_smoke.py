@@ -352,3 +352,42 @@ class CopyAndPackOverHttpTests(ServerTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ContentSearchTests(unittest.TestCase):
+    """Looking inside files: the honest kind of 'search the contents'."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self._tmp.name)
+        (self.root / "diary.txt").write_text(
+            "line one\nthe receipt was on the table\nlast line", encoding="utf-8")
+        (self.root / "code.py").write_text(
+            "def main():\n    print('receipt check')\n", encoding="utf-8")
+        (self.root / "photo.jpg").write_bytes(b"jpeg")  # never read
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def names(self, q):
+        return [m["name"] for m in finder.search_inside(q, roots=[self.root])["matches"]]
+
+    def test_a_word_inside_a_file_is_found_with_its_line(self):
+        got = finder.search_inside("receipt", roots=[self.root])["matches"]
+        self.assertEqual(len(got), 2)  # diary.txt and code.py both say it
+        diary = next(m for m in got if m["name"] == "diary.txt")
+        self.assertEqual(diary["line"], 2)
+        self.assertIn("receipt", diary["snippet"])
+
+    def test_every_word_must_be_present_in_the_line(self):
+        self.assertEqual(self.names("receipt table"), ["diary.txt"])
+        self.assertEqual(self.names("receipt table moon"), [])
+
+    def test_binary_files_are_never_read(self):
+        self.assertEqual(self.names("jpeg"), [])  # the bytes of photo.jpg are not searched
+
+    def test_empty_words_is_polite_not_an_error(self):
+        result = finder.search_inside("", roots=[self.root])
+        self.assertEqual(result["total"], 0)
+        self.assertTrue(result["why"])
+

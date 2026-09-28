@@ -12,7 +12,7 @@ in the folders you let it look in.
 """
 
 APP_NAME = "nanoPick"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 TAGLINE = "find your files by saying what you remember"
 

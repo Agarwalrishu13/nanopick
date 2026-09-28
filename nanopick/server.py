@@ -127,6 +127,15 @@ def create_app() -> App:
         store.save_settings({"last_search": query})
         return Json(finder.search(query, kind=kind, when=when, sort=sort))
 
+    @app.get("/api/search-inside")
+    def search_inside(request):
+        query = request.q("q", "")
+        kind = request.q("kind", "any")
+        if kind not in ("any", *finder.KINDS):
+            kind = "any"
+        store.save_settings({"last_search": query})
+        return Json(finder.search_inside(query, kind=kind))
+
     @app.get("/api/one")
     def one(request):
         path = request.q("path", "")

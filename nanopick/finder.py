@@ -36,6 +36,9 @@ KINDS = {
 
 WHEN_BUCKETS = ("today", "this week", "this month", "this year", "older")
 
+# The file kinds worth reading when somebody asks what is INSIDE a file.
+CONTENT_SUFFIXES = {".txt", ".md", ".csv", ".log", ".json", ".py", ".js", ".html", ".css", ".xml", ".yml", ".yaml", ".ini", ".tex", ".srt"}
+
 
 def kind_of(name: str) -> str:
     """pictures, documents, music, video, archives — or 'other'."""
@@ -219,3 +222,59 @@ def describe(path) -> dict | None:
     except OSError:
         return None
     return _describe(path, stat)
+
+
+# --------------------------------------------------------------------------
+# Looking INSIDE files, not just at their names
+# --------------------------------------------------------------------------
+MAX_FILE_BYTES = 512 * 1024  # never read more than this of any one file
+MAX_CONTENT_MATCHES = 40     # one page of "it says this here" is enough
+
+
+def search_inside(query: str, kind: str = "any", roots=None) -> dict:
+    """The files whose *contents* contain every word, with the line to show.
+
+    This is the honest version of "search inside files": it reads text files
+    only (the same kinds the previews show), never more than 512 KB of any
+    one file, and answers with the actual line that matched. Nothing is
+    indexed or remembered — each search reads only what it needs to.
+    """
+    words = [w.lower() for w in (query or "").split()]
+    if not words:
+        return {"ok": True, "total": 0, "matches": [],
+                "why": "Type some words first, then press “look inside files”."}
+
+    candidates: list[Path] = []
+    for root in (roots if roots is not None else _roots_from_settings()):
+        _walk(root, candidates)
+        if len(candidates) >= MAX_SCAN:
+            break
+    candidates = candidates[:MAX_SCAN]
+
+    matches: list[dict] = []
+    for path in candidates:
+        if path.suffix.lower() not in CONTENT_SUFFIXES:
+            continue
+        if kind != "any" and kind_of(path.name) != kind:
+            continue
+        try:
+            if path.stat().st_size > MAX_FILE_BYTES:
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for number, line in enumerate(text.splitlines(), start=1):
+            lowered = line.lower()
+            if all(word in lowered for word in words):
+                matches.append({
+                    "path": str(path),
+                    "name": path.name,
+                    "what": kind_word(kind_of(path.name)),
+                    "line": number,
+                    "snippet": line.strip()[:200],
+                })
+                break  # one matching line per file is enough for a page
+        if len(matches) >= MAX_CONTENT_MATCHES:
+            break
+
+    return {"ok": True, "total": len(matches), "matches": matches, "why": ""}

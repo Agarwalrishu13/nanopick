@@ -12,7 +12,7 @@ its folder, send a copy where it needs to go, or pack a few of them into one zip
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![python](https://img.shields.io/badge/python-3.9+-58a6ff.svg)]()
 [![dependencies](https://img.shields.io/badge/required%20deps-0-f0883e.svg)]()
-[![tests](https://img.shields.io/badge/tests-35%20passing-3ddc97.svg)]()
+[![tests](https://img.shields.io/badge/tests-39%20passing-3ddc97.svg)]()
 
 </div>
 
@@ -20,6 +20,12 @@ its folder, send a copy where it needs to go, or pack a few of them into one zip
 
 > **Part of [the nano family](https://github.com/Agarwalrishu13/nano)** — eleven offline-first apps for people who do not code. This is the map of the whole project.
 
+
+## What's new in 0.2
+
+- **Look inside files, not just at names.** Tick "also look inside text files" and
+  nanoPick reads notes, code, logs and other text files (never more than half a
+  megabyte of any one, never pictures) and shows the actual line that matched.
 
 ## What this is, in one paragraph
 

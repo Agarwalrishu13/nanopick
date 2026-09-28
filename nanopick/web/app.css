@@ -56,3 +56,13 @@
 @media (max-width: 860px) {
   .preview-grid { grid-template-columns: 1fr; }
 }
+
+.inside-toggle { display: flex; gap: 8px; justify-content: center; align-items: center;
+  margin-top: 14px; font-size: 14px; color: var(--muted); cursor: pointer; }
+.inside-toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+.inside-match { display: flex; gap: 10px; padding: 9px 12px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; width: 100%;
+  color: var(--text); text-align: left; font-size: 13.5px; }
+.inside-match:hover { border-color: var(--accent); }
+.inside-match .ln { color: var(--faint); flex: none; font-family: var(--mono); }
+.inside-match .sn { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

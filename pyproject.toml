@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nanopick"
-version = "0.1.0"
+version = "0.2.0"
 description = "Find your files by saying what you remember — words, a kind, roughly when. Open them, copy them, pack them. Nothing is ever moved."
 readme = "README.md"
 requires-python = ">=3.9"

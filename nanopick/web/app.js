@@ -168,7 +168,28 @@ async function refreshWhere() {
 }
 
 // ---------------------------------------------------------------- wiring
-$("goBtn").onclick = runSearch;
+async function runInsideSearch() {
+  const box = $("insideResults");
+  if (!$("inside").checked) { box.innerHTML = ""; return; }
+  const data = await api("/api/search-inside?q=" + encodeURIComponent($("q").value.trim()) +
+    "&kind=" + encodeURIComponent($("kind").value));
+  box.innerHTML = "";
+  if (!data.total) { box.innerHTML = '<div class="muted small" style="padding:8px 2px">No file says that inside.</div>'; return; }
+  const head = document.createElement("div");
+  head.className = "muted small"; head.style.padding = "8px 2px";
+  head.textContent = "Inside " + data.total + " file" + (data.total === 1 ? "" : "s") + ":";
+  box.appendChild(head);
+  for (const m of data.matches) {
+    const row = document.createElement("div");
+    row.className = "inside-match";
+    row.innerHTML = '<span class="ln">' + m.line + '</span><span class="sn">' +
+      escapeHtml(m.snippet) + '</span><span class="muted">' + escapeHtml(m.name) + '</span>';
+    row.onclick = () => showPreview(m.path);
+    box.appendChild(row);
+  }
+}
+$("goBtn").onclick = () => { runSearch(); runInsideSearch(); };
+$("inside").onchange = runInsideSearch;
 $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") runSearch(); });
 $("kind").onchange = runSearch;
 $("when").onchange = runSearch;
