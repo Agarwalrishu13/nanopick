@@ -259,7 +259,7 @@ class ServerBasicsTests(ServerTestCase):
         self.assertEqual(status, 200)
         data = self.body(raw)
         self.assertEqual(data["app"], "nanoPick")
-        self.assertIn(str(self.root), data["roots"])
+        self.assertIn(str(Path(self.root).resolve()), data["roots"])
 
     def test_search_over_http_finds_the_file(self):
         raw, status = self.get("/api/search?q=receipt")
